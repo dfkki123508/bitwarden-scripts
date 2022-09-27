@@ -32,7 +32,6 @@ bw_unlock(){
         return 0
     fi
 
-    echo "result: $login_cmd_result"
     local session_token=$(echo "$login_cmd_result" | grep -Po 'export BW_SESSION="\K.*(?=")')
     export BW_SESSION=$session_token
 }
