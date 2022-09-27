@@ -53,11 +53,19 @@ bw_list() {
         echo "Nothing found."
         return 1
     elif [[ $NUM_RESULTS -gt 1 ]]; then
+        # Present the user the option to select from the search results
         local extracted=$(jq -r '.[] | {name, "ok": .login["username"]} | join(";")' <<< $SEARCH_RESULT)
-        declare -a options=($(echo $extracted | tr "\n" " "))
+
+        # Make array of options        
+        local account_opts=()
+        while read -r line; do account_opts+=("$line"); done <<< "$extracted"
+        
         PS3="Choose account: "
-        select account in "${options[@]}"
+
+        # TODO: disallow invalid options
+        select account in "${account_opts[@]}"
         do
+            # subtract for 0-based indexing
             ITEM_IDX=$(($REPLY-1))
             break
         done
